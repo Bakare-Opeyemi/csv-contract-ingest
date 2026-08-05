@@ -1,0 +1,2 @@
+order_id,email,customer_email,amount,ordered_at
+K-1,old@example.com,new@example.com,3.00,2026-05-05

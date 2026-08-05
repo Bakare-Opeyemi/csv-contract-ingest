@@ -1,0 +1,6 @@
+invoice_no,vendor,net_total,due_on,line_count,status
+INV-1,Alpha,10.0005,05/01/2026,3,open
+INV-2,Beta,10,31/12/2026,,open
+INV-3,Gamma,5.5,2026-01-05,2,open
+INV-4,Delta,7.25,06/01/2026,two,open
+INV-5,Epsilon,7.25,07/01/2026,4,

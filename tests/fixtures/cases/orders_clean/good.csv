@@ -1,0 +1,3 @@
+order_id,customer_email,amount,ordered_at,currency,gift
+C-1,a@example.com,5.00,2026-05-01,GBP,no
+C-2,b@example.com,15.50,2026-05-02,GBP,false

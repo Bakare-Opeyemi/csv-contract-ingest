@@ -1,0 +1,7 @@
+order_id,customer_email,amount,ordered_at,currency,gift
+R-1,,4.00,2026-05-06,USD,no
+R-2,e@example.com,twelve,2026-05-07,USD,no
+R-3,f@example.com,4.00,2026-05-08
+R-4,g@example.com,4.00,2026-05-09,USD,no,extra
+R-5,h@example.com,4.00,2026-05-10,USD,maybe
+R-6,i@example.com,4.00,2026-05-11,USD,no

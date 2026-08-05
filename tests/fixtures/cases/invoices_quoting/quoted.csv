@@ -1,0 +1,5 @@
+invoice_no,vendor,net_total,due_on
+INV-9,"Smith, Jones & Co",100.5,08/01/2026
+INV-10,"He said ""urgent""",2.25,09/01/2026
+INV-11,"Multi
+Line Vendor",3.5,10/01/2026

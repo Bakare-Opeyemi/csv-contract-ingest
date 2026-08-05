@@ -1,0 +1,40 @@
+{
+  "name": "orders",
+  "output_order": [
+    "order_id",
+    "customer_email",
+    "amount",
+    "currency",
+    "ordered_at",
+    "gift"
+  ],
+  "fields": {
+    "order_id": {
+      "type": "string",
+      "required": true
+    },
+    "customer_email": {
+      "type": "string",
+      "required": true,
+      "aliases": ["email", "buyer_email"]
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true,
+      "scale": 2
+    },
+    "ordered_at": {
+      "type": "date",
+      "required": true,
+      "format": "%Y-%m-%d"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "gift": {
+      "type": "bool",
+      "default": false
+    }
+  }
+}

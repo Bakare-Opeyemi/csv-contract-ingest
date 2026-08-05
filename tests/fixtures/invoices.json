@@ -1,0 +1,40 @@
+{
+  "name": "invoices",
+  "output_order": [
+    "invoice_no",
+    "vendor",
+    "net_total",
+    "due_on",
+    "line_count",
+    "status"
+  ],
+  "fields": {
+    "vendor": {
+      "type": "string",
+      "required": true
+    },
+    "invoice_no": {
+      "type": "string",
+      "required": true,
+      "aliases": ["invoice_number", "inv_no"]
+    },
+    "due_on": {
+      "type": "date",
+      "required": true,
+      "format": "%d/%m/%Y"
+    },
+    "net_total": {
+      "type": "decimal",
+      "required": true,
+      "scale": 3
+    },
+    "status": {
+      "type": "string",
+      "default": "pending"
+    },
+    "line_count": {
+      "type": "int",
+      "default": 0
+    }
+  }
+}
