@@ -29,10 +29,8 @@ Field options:
 
 - type: string, int, decimal, date, bool
 - required: leave it out and it's false
-- aliases: header names we used to accept. Left over from the 2023 rename,
-  a few customers never updated their exports.
-- default: used when the column isn't in the file at all, and also when it is
-  there but the cell is empty. Only means anything on optional fields.
+- aliases: header names we used to accept. Left over from the 2023 rename, a few customers never updated their exports.
+- default: used when the column isn't in the file at all, and also when it is there but the cell is empty. Only means anything on optional fields.
 - scale: decimal only
 - format: date only, strptime string for whatever shape the customer sends
 

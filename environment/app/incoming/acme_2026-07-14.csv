@@ -1,0 +1,3 @@
+order_id,customer_email,amount,ordered_at,currency,gift
+A-10021,jo@acme.example,49.99,2026-07-14,USD,no
+A-10022,priya@acme.example,7.00,2026-07-14,USD,yes
