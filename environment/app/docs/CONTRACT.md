@@ -65,4 +65,17 @@ field has a newline in it.
 
 Anything that won't parse is a coercion failure and quarantines the row.
 
+
+Outputs
+
+Three files. records.ndjson is one object per accepted row, keys in
+output_order. quarantine.ndjson is one object per rejected row with file,
+line_no, reason and raw. report.json has the contract name and one entry per
+input file with rejected, reason, accepted, quarantined, unknown_columns and
+defaulted_columns.
+
+Row-level reasons are missing_required_value, type_coercion_failed and
+too_many_fields. A whole-file rejection uses missing_required_column:<field>
+or duplicate_column:<field>.
+
 TODO: nothing validates the contracts themselves. A typo in a type name and it blows up mid-run instead of when you save the file.
