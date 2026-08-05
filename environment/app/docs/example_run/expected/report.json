@@ -1,0 +1,58 @@
+{
+  "contract": "orders",
+  "files": [
+    {
+      "file": "alias_and_extra.csv",
+      "rejected": false,
+      "reason": null,
+      "accepted": 1,
+      "quarantined": 0,
+      "unknown_columns": [
+        "notes"
+      ],
+      "defaulted_columns": [
+        "currency",
+        "gift"
+      ]
+    },
+    {
+      "file": "bad_rows.csv",
+      "rejected": false,
+      "reason": null,
+      "accepted": 1,
+      "quarantined": 3,
+      "unknown_columns": [],
+      "defaulted_columns": [
+        "currency",
+        "gift"
+      ]
+    },
+    {
+      "file": "clean.csv",
+      "rejected": false,
+      "reason": null,
+      "accepted": 2,
+      "quarantined": 0,
+      "unknown_columns": [],
+      "defaulted_columns": []
+    },
+    {
+      "file": "no_amount.csv",
+      "rejected": true,
+      "reason": "missing_required_column:amount",
+      "accepted": 0,
+      "quarantined": 0,
+      "unknown_columns": [],
+      "defaulted_columns": []
+    },
+    {
+      "file": "two_emails.csv",
+      "rejected": true,
+      "reason": "duplicate_column:customer_email",
+      "accepted": 0,
+      "quarantined": 0,
+      "unknown_columns": [],
+      "defaulted_columns": []
+    }
+  ]
+}

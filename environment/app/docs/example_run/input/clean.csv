@@ -1,0 +1,3 @@
+order_id,customer_email,amount,ordered_at,currency,gift
+E-1,ana@example.com,10.005,2026-06-01,EUR,yes
+E-2,ben@example.com,3,2026-06-02,,TRUE
