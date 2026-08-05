@@ -254,3 +254,54 @@ def test_quoted_fields_survive_commas_and_escaped_quotes(run_case):
     assert vendors["INV-9"] == "Smith, Jones & Co"
     assert vendors["INV-10"] == 'He said "urgent"'
     assert vendors["INV-11"].replace("\r\n", "\n") == "Multi\nLine Vendor"
+
+
+
+def test_duplicate_key_keeps_the_last_row_read(run_case):
+    """A key repeated across files collapses to the row from the later file."""
+    result = run_case("orders_dupes")
+    assert len(result.records) == 2
+    by_id = {r["order_id"]: r for r in result.records}
+    assert by_id["DUP-1"]["amount"] == "99.00"
+    assert by_id["DUP-1"]["customer_email"] == "new@example.com"
+
+
+def test_superseded_counted_against_the_losing_file(run_case):
+    """A dropped row counts on the file it came from, not the winner's file."""
+    result = run_case("orders_dupes")
+    assert result.for_file("a_first.csv")["accepted"] == 1
+    assert result.for_file("a_first.csv")["superseded"] == 1
+    assert result.for_file("b_later.csv")["accepted"] == 1
+    assert result.for_file("b_later.csv")["superseded"] == 0
+
+
+def test_superseded_rows_are_not_quarantined(run_case):
+    """Dropping a duplicate is not an error, so quarantine stays empty."""
+    result = run_case("orders_dupes")
+    assert result.quarantine == []
+    assert result.exit_code == 0
+
+
+def test_compound_dedupe_key_uses_every_field(run_case):
+    """Rows matching on only part of the key stay as separate records."""
+    result = run_case("invoices_dupes")
+    assert len(result.records) == 2
+    assert [r["net_total"] for r in result.records] == ["20.000", "30.000"]
+
+
+def test_dedupe_compares_coerced_values(run_case):
+    """5/1/2026 and 05/01/2026 are one date, so those two rows collapse."""
+    result = run_case("invoices_dupes")
+    assert result.for_file("reissued.csv")["superseded"] == 1
+    assert [r["due_on"] for r in result.records] == ["2026-01-05", "2026-01-06"]
+
+
+@pytest.mark.parametrize("case,upload,data_rows", [
+    ("orders_dupes", "a_first.csv", 2),
+    ("invoices_dupes", "reissued.csv", 3),
+    ("orders_rows", "messy.csv", 6),
+])
+def test_report_counts_account_for_every_data_row(run_case, case, upload, data_rows):
+    """accepted + quarantined + superseded equals the file's data row count."""
+    entry = run_case(case).for_file(upload)
+    assert entry["accepted"] + entry["quarantined"] + entry["superseded"] == data_rows
