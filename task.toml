@@ -10,13 +10,13 @@ keywords = ["processing", "csv", "data-ingestion", "python"]
 [metadata]
 
 [verifier]
-timeout_sec = 10000.0
+timeout_sec = 600.0
 collect = []
 
 [verifier.env]
 
 [agent]
-timeout_sec = 10000.0
+timeout_sec = 600.0
 
 [environment]
 network_mode = "public"

@@ -1,5 +1,6 @@
 {
   "name": "orders",
+  "dedupe_on": ["order_id"],
   "output_order": [
     "order_id",
     "customer_email",

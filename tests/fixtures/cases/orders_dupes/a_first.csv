@@ -1,0 +1,3 @@
+order_id,customer_email,amount,ordered_at
+DUP-1,old@example.com,10.00,2026-07-01
+KEEP-1,keep@example.com,5.00,2026-07-01

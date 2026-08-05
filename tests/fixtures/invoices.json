@@ -1,5 +1,6 @@
 {
   "name": "invoices",
+  "dedupe_on": ["invoice_no", "due_on"],
   "output_order": [
     "invoice_no",
     "vendor",

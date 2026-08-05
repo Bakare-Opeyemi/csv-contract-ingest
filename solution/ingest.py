@@ -141,7 +141,7 @@ def process_file(path, name, contract, header_map):
     if reason:
         return {
             "file": name, "rejected": True, "reason": reason,
-            "accepted": 0, "quarantined": 0,
+            "accepted": 0, "quarantined": 0, "superseded": 0,
             "unknown_columns": [], "defaulted_columns": [],
         }, [], []
 
@@ -164,14 +164,32 @@ def process_file(path, name, contract, header_map):
                 "file": name, "line_no": n, "reason": bad, "raw": row,
             })
         else:
-            records.append(record)
+            records.append((record, name, n))
 
     return {
         "file": name, "rejected": False, "reason": None,
-        "accepted": len(records), "quarantined": len(quarantined),
+        "accepted": len(records), "quarantined": len(quarantined), "superseded": 0,
         "unknown_columns": unknown, "defaulted_columns": defaulted,
     }, records, quarantined
 
+def dedupe(entries, contract):
+    """Collapse rows sharing a dedupe_on key, keeping the last one read."""
+    keys = contract.get("dedupe_on") or []
+    if not keys:
+        return [e[0] for e in entries], {}
+
+    winners = {}
+    for idx, (record, _, _) in enumerate(entries):
+        winners[tuple(record[k] for k in keys)] = idx
+
+    kept_idx = set(winners.values())
+    kept, superseded = [], {}
+    for idx, (record, name, _) in enumerate(entries):
+        if idx in kept_idx:
+            kept.append(record)
+        else:
+            superseded[name] = superseded.get(name, 0) + 1
+    return kept, superseded
 
 def main():
     ap = argparse.ArgumentParser()
@@ -187,14 +205,21 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     names = sorted(n for n in os.listdir(args.input) if n.endswith(".csv"))
 
-    reports, all_records, all_quarantined = [], [], []
+    reports, all_entries, all_quarantined = [], [], []
     for name in names:
-        report, records, quarantined = process_file(
+        report, entries, quarantined = process_file(
             os.path.join(args.input, name), name, contract, header_map
         )
         reports.append(report)
-        all_records.extend(records)
+        all_entries.extend(entries)
         all_quarantined.extend(quarantined)
+
+    all_records, superseded = dedupe(all_entries, contract)
+
+    for report in reports:
+        lost = superseded.get(report["file"], 0)
+        report["superseded"] = lost
+        report["accepted"] -= lost
 
     def write_ndjson(filename, items):
         with open(os.path.join(args.out, filename), "w", encoding="utf-8") as fh:

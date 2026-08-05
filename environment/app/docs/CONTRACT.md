@@ -5,6 +5,7 @@ the real files obviously have no comments in them.
 
     {
       "name": "orders",                 <- ends up in report.json
+      "dedupe_on": ["order_id"],        <- natural key, see Duplicates below
       "output_order": [                 <- key order in records.ndjson.
         "order_id",                        reconciliation reads these
         "customer_email",                  positionally so check with
@@ -71,11 +72,27 @@ Outputs
 Three files. records.ndjson is one object per accepted row, keys in
 output_order. quarantine.ndjson is one object per rejected row with file,
 line_no, reason and raw. report.json has the contract name and one entry per
-input file with rejected, reason, accepted, quarantined, unknown_columns and
-defaulted_columns.
+input file with rejected, reason, accepted, quarantined, superseded,
+unknown_columns and defaulted_columns.
 
 Row-level reasons are missing_required_value, type_coercion_failed and
 too_many_fields. A whole-file rejection uses missing_required_column:<field>
 or duplicate_column:<field>.
+
+Duplicates
+
+Customers resend rows, sometimes with corrections, sometimes in a later file.
+If the contract has dedupe_on, rows sharing the same values across all those
+fields collapse to one, and the last one we read wins. Files are read in
+filename order, rows in file order, so "last" means last overall and not last
+within a file.
+
+Compare the coerced values, not the raw text, so 7.5 and 7.50 are the same
+amount.
+
+The dropped rows aren't errors, so they don't go to quarantine. Each file's
+report entry gets a superseded count for rows of its own that lost. accepted
+only counts rows that made it into records.ndjson, so for any file
+accepted + quarantined + superseded is the number of data rows it had.
 
 TODO: nothing validates the contracts themselves. A typo in a type name and it blows up mid-run instead of when you save the file.

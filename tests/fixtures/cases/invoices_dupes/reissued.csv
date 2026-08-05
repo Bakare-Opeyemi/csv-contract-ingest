@@ -1,0 +1,4 @@
+invoice_no,vendor,net_total,due_on
+INV-50,Alpha,10.000,5/1/2026
+INV-50,Alpha,20.000,05/01/2026
+INV-50,Alpha,30.000,06/01/2026
