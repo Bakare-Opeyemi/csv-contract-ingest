@@ -1,3 +1,1 @@
-{"file": "bad_rows.csv", "line_no": 2, "reason": "missing_required_value", "raw": ["E-5", "", "9.99", "2026-06-05"]}
-{"file": "bad_rows.csv", "line_no": 3, "reason": "type_coercion_failed", "raw": ["E-6", "dee@example.com", "abc", "2026-06-06"]}
-{"file": "bad_rows.csv", "line_no": 4, "reason": "too_many_fields", "raw": ["E-7", "eve@example.com", "1.00", "2026-06-07", "extra"]}
+{"file": "orders_sample.csv", "line_no": 4, "reason": "type_coercion_failed", "raw": ["E-3", "cara@example.com", "oops", "2026-06-03", "USD", "no"]}

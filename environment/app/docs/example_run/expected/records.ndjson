@@ -1,4 +1,2 @@
-{"order_id": "E-3", "customer_email": "cara@example.com", "amount": "12.50", "currency": "USD", "ordered_at": "2026-06-03", "gift": false}
-{"order_id": "E-8", "customer_email": "fay@example.com", "amount": "2.00", "currency": "USD", "ordered_at": "2026-06-08", "gift": false}
 {"order_id": "E-1", "customer_email": "ana@example.com", "amount": "10.01", "currency": "EUR", "ordered_at": "2026-06-01", "gift": true}
 {"order_id": "E-2", "customer_email": "ben@example.com", "amount": "3.00", "currency": "USD", "ordered_at": "2026-06-02", "gift": true}

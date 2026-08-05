@@ -1,5 +1,0 @@
-order_id,customer_email,amount,ordered_at
-E-5,,9.99,2026-06-05
-E-6,dee@example.com,abc,2026-06-06
-E-7,eve@example.com,1.00,2026-06-07,extra
-E-8,fay@example.com,2.00,2026-06-08
