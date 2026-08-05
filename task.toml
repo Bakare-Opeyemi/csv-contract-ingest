@@ -3,9 +3,9 @@ artifacts = []
 
 [task]
 name = "tatsuniya/csv-contract-ingest"
-description = ""
-authors = []
-keywords = []
+description = "Rewrite a positional CSV ingester to be driven by a runtime schema contract"
+authors = [{ name = "Abdullateef Bakare", email = "abdullateef.bakare@talent.andela.com" }]
+keywords = ["processing", "csv", "data-ingestion", "python"]
 
 [metadata]
 
