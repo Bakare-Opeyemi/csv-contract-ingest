@@ -23,5 +23,5 @@ a second feed onboards next month with a different field set.
 Constraints:
 
 - Work in /app.
-- Standard library only, no network access.
+- Standard library only. We're not adding another dependency to this pipeline.
 - Don't modify /app/contracts/ or /app/docs/.
