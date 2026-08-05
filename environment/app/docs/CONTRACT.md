@@ -44,6 +44,25 @@ date is read with format and always written back as YYYY-MM-DD regardless of
 what came in.
 bool takes true/false/yes/no/1/0, any case.
 
+Aliases
+
+If a file has both the current name and one of its aliases, the current name
+wins and the alias column counts as unknown. Vertex did this to us for a
+month after their half-finished migration.
+
+If two columns land on the same field and neither one is the current name,
+there's no telling which is real, so the file gets rejected.
+
+Rows
+
+A row with fewer fields than the header gets padded out with empty values.
+A row with more gets quarantined on its own, the rest of the file still goes
+through.
+
+line_no in the quarantine file counts records with the header as 1, so the
+first data row is 2. Not the same as physical line numbers once a quoted
+field has a newline in it.
+
 Anything that won't parse is a coercion failure and quarantines the row.
 
 TODO: nothing validates the contracts themselves. A typo in a type name and it blows up mid-run instead of when you save the file.
