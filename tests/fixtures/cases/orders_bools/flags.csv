@@ -1,0 +1,7 @@
+order_id,customer_email,amount,ordered_at,gift
+B-1,a@example.com,1.00,2026-06-01,TRUE
+B-2,b@example.com,1.00,2026-06-02,yes
+B-3,c@example.com,1.00,2026-06-03,1
+B-4,d@example.com,1.00,2026-06-04,False
+B-5,e@example.com,1.00,2026-06-05,NO
+B-6,f@example.com,1.00,2026-06-06,0

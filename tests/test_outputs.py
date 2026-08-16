@@ -90,8 +90,16 @@ def test_clean_upload_exits_zero(run_case):
 
 
 def test_bool_accepts_documented_spellings(run_case):
-    """no and false both parse to JSON false."""
-    assert [r["gift"] for r in run_case("orders_clean").records] == [False, False]
+    """All six spellings parse, in any case, to the JSON boolean they name."""
+    gifts = {r["order_id"]: r["gift"] for r in run_case("orders_bools").records}
+    assert gifts == {
+        "B-1": True,   # TRUE
+        "B-2": True,   # yes
+        "B-3": True,   # 1
+        "B-4": False,  # False
+        "B-5": False,  # NO
+        "B-6": False,  # 0
+    }
 
 
 def test_columns_matched_by_name_not_position(run_case):
@@ -117,6 +125,23 @@ def test_unknown_columns_are_reported_not_emitted(run_case, case, upload, unknow
     result = run_case(case)
     assert result.for_file(upload)["unknown_columns"] == unknown
     assert all(u not in r for r in result.records for u in unknown)
+
+@pytest.mark.parametrize("case,upload,defaulted", [
+    ("orders_mixed", "legacy_feed.csv", ["currency", "gift"]),
+    ("invoices_mixed", "vendor_feed.csv", ["line_count", "status"]),
+])
+def test_defaulted_columns_lists_the_absent_optionals(run_case, case, upload, defaulted):
+    """Fields with no column in the upload are named in the report."""
+    entry = run_case(case).for_file(upload)
+    assert sorted(entry["defaulted_columns"]) == defaulted
+
+
+def test_defaulted_columns_ignores_empty_cells_in_present_columns(run_case):
+    """A blank cell defaults the value but the column was there, so nothing is listed."""
+    result = run_case("invoices_rows")
+    assert result.for_file("invoices.csv")["defaulted_columns"] == []
+    assert {r["invoice_no"]: r["status"] for r in result.records}["INV-5"] == "pending"
+
 
 @pytest.mark.parametrize("case,field,expected", [
     ("orders_mixed", "currency", "USD"),
@@ -193,6 +218,23 @@ def test_quarantined_rows_give_exit_two(run_case):
     assert run_case("orders_rows").exit_code == 2
 
 
+def test_rejected_file_outranks_quarantined_rows(run_case):
+    """A run with both a rejected file and quarantined rows exits 3, not 2."""
+    result = run_case("orders_exit_precedence")
+    assert result.for_file("a_reject.csv")["rejected"] is True
+    assert len(result.quarantine) == 2
+    assert result.exit_code == 3
+
+
+def test_quarantine_entry_names_the_file_it_came_from(run_case):
+    """Each quarantined row carries the upload it was read from."""
+    entries = run_case("orders_exit_precedence").quarantine
+    assert [(e["file"], e["line_no"], e["reason"]) for e in entries] == [
+        ("b_partial.csv", 3, "missing_required_value"),
+        ("c_partial.csv", 2, "type_coercion_failed"),
+    ]
+
+
 @pytest.mark.parametrize("case,field,expected", [
     ("orders_mixed", "amount", ["7.50", "0.01"]),
     ("invoices_rows", "net_total", ["10.001", "10.000", "7.250"]),
@@ -238,6 +280,15 @@ def test_record_keys_follow_contract_output_order(run_case, case, order):
     assert len(records) == 2
     for record in records:
         assert list(record.keys()) == order
+
+
+@pytest.mark.parametrize("case,name", [
+    ("orders_clean", "orders"),
+    ("invoices_rows", "invoices"),
+])
+def test_report_names_the_contract_it_ran(run_case, case, name):
+    """report.json carries the contract's own name, not the feed's filename."""
+    assert run_case(case).report["contract"] == name
 
 
 def test_report_lists_every_file_sorted(run_case):
