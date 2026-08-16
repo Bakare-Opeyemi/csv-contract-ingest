@@ -1,0 +1,8 @@
+invoice_no,vendor,net_total,due_on
+INV-20,"Multi
+Line Vendor",1.5,01/02/2026
+INV-21,Gamma,nope,02/02/2026
+INV-22,"Two
+More
+Lines",2.5,03/02/2026
+INV-23,Delta,also-bad,04/02/2026

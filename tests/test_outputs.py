@@ -126,6 +126,14 @@ def test_unknown_columns_are_reported_not_emitted(run_case, case, upload, unknow
     assert result.for_file(upload)["unknown_columns"] == unknown
     assert all(u not in r for r in result.records for u in unknown)
 
+def test_every_unknown_column_is_reported(run_case):
+    """A file with several unrecognised columns reports all of them, not just one."""
+    result = run_case("orders_unknowns")
+    unknown = ["alpha_ref", "mid_field", "zeta_note"]
+    assert sorted(result.for_file("extra.csv")["unknown_columns"]) == unknown
+    assert all(u not in r for r in result.records for u in unknown)
+
+
 @pytest.mark.parametrize("case,upload,defaulted", [
     ("orders_mixed", "legacy_feed.csv", ["currency", "gift"]),
     ("invoices_mixed", "vendor_feed.csv", ["line_count", "status"]),
@@ -205,6 +213,15 @@ def test_row_failures_are_quarantined_with_reasons(run_case):
     ]
 
 
+def test_line_no_counts_records_not_physical_lines(run_case):
+    """A quoted newline shifts the physical lines, but line_no still counts records."""
+    entries = run_case("invoices_lines").quarantine
+    assert [(e["raw"][0], e["line_no"]) for e in entries] == [
+        ("INV-21", 3),
+        ("INV-23", 5),
+    ]
+
+
 def test_short_row_is_padded_and_accepted(run_case):
     """A row with fewer fields than the header is padded, not quarantined."""
     records = {r["order_id"]: r for r in run_case("orders_rows").records}
@@ -268,6 +285,37 @@ def test_non_numeric_int_is_quarantined(run_case):
     """A non-numeric value in an int column quarantines the row."""
     reasons = {e["raw"][0]: e["reason"] for e in run_case("invoices_rows").quarantine}
     assert reasons["INV-4"] == "type_coercion_failed"
+
+
+@pytest.mark.parametrize("invoice_no,line_no", [
+    ("INV-31", 3),  # 1_000
+    ("INV-32", 4),  # 1.0
+    ("INV-33", 5),  # 1,000
+])
+def test_int_takes_sign_and_digits_only(run_case, invoice_no, line_no):
+    """Underscores, decimal points and thousands separators are all coercion failures."""
+    entries = {e["raw"][0]: e for e in run_case("invoices_strict_values").quarantine}
+    assert entries[invoice_no]["reason"] == "type_coercion_failed"
+    assert entries[invoice_no]["line_no"] == line_no
+
+
+def test_signed_int_is_accepted(run_case):
+    """A leading + is part of the documented int shape."""
+    counts = {
+        r["invoice_no"]: r["line_count"]
+        for r in run_case("invoices_strict_values").records
+    }
+    assert counts["INV-34"] == 7
+
+
+def test_values_are_stripped_of_surrounding_whitespace(run_case):
+    """Padded cells are stripped before coercion, strings included."""
+    records = {r["invoice_no"]: r for r in run_case("invoices_strict_values").records}
+    assert "INV-30" in records, "padded key was not stripped"
+    assert records["INV-30"]["vendor"] == "Padded Vendor"
+    assert records["INV-30"]["status"] == "open"
+    assert records["INV-30"]["due_on"] == "2026-03-01"
+    assert records["INV-30"]["line_count"] == 4
 
 
 @pytest.mark.parametrize("case,order", [
